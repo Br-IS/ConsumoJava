@@ -13,6 +13,4 @@ public class Cancion {
     private String album;
     private String anio ;
 
-    public Cancion() {
-    }
 }

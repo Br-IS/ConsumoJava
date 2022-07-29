@@ -5,23 +5,24 @@
  */
 package controlador;
 
-import modelo.Cancion;
-import modelo.api.CancionApi;
 import vista.Principal;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Scanner;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.logging.Logger;
 
 /**
- *
  * @author Boris
  */
 public class Controlador {
 
-    private  Principal principal;
+    private HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
+    private  HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("https://m5b.herokuapp.com/listas/list")).build();
+
+    private Principal principal;
 
     public Controlador(Principal principal) {
         this.principal = principal;
@@ -30,14 +31,28 @@ public class Controlador {
     }
 
     public static void main(String[] args) {
-        CancionApi cancionApi = new CancionApi();
 
-        cancionApi.cancionList();
+        HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
 
-        /*
-        for (int i = 0; i < cancionApi.cancionList().size(); i++) {
-            cancionApi.cancionList().get(i).toString();
-        }*/
+        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create("https://m5b.herokuapp.com/listas/list")).build();
+
+
+        try {
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println(httpResponse.body());
+
+        } catch (IOException | InterruptedException e) {
+            Logger.getLogger(Controlador.class.getName()).severe(e.getMessage());
+
+            throw new RuntimeException(e);
+        }
+
+
+        //CancionApi cancionApi = new CancionApi();
+        //cancionApi.cancionList();
+
+
     }
 }
 /*
