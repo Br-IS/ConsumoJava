@@ -11,4 +11,7 @@ public class Lista {
     private String nombre;
     private String descripcion;
     private ArrayList<Cancion> cancion;
+
+    public Lista() {
+    }
 }
