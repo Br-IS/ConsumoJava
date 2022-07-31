@@ -16,10 +16,5 @@ public class Cancion {
 
     public Cancion() {
     }
-/*
-    public List<Cancion> getCanciones(String body) {
-List<Cancion> cancionList = new ConvertirObjeto().convertir(body, new TypeReference<List<Cancion>>() {
-        });
-        return cancionList;
-    }*/
+
 }

@@ -9,8 +9,8 @@
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/controlador/Controlador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/controlador/Controlador.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/modelo/Cancion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/modelo/Cancion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/modelo/Lista.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/modelo/Lista.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/modelo/api/Apis.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/modelo/api/Apis.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vista/Principal.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vista/Principal.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/vista/Principal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vista/Principal.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,6 +41,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.SHOW": "false",
     "WebServerToolWindowFactoryState": "false",
     "last_opened_file_path": "C:/Users/Boris/Documents/GitHub/ConsumoJava",
     "node.js.detected.package.eslint": "true",
@@ -86,6 +87,11 @@
       <workItem from="1657944058772" duration="3347000" />
       <workItem from="1658082875491" duration="19000" />
       <workItem from="1659135628020" duration="6383000" />
+      <workItem from="1659144377674" duration="5058000" />
+      <workItem from="1659150343135" duration="1236000" />
+      <workItem from="1659198555789" duration="12431000" />
+      <workItem from="1659215212079" duration="669000" />
+      <workItem from="1659232504592" duration="12057000" />
     </task>
     <servers />
   </component>

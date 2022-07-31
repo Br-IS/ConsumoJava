@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import modelo.Cancion;
 import modelo.Lista;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,133 +16,209 @@ import java.util.List;
 
 public class Apis {
 
-    private HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
-    public static final String BASE_URL = "https://m5b.herokuapp.com/";
+    private final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
+    public static final String BASE_URL = "http://localhost:8080/";
+    private HttpResponse<String> httpResponse;
+    private Lista lista;
+    private ArrayList<Lista> listaList;
+    private List<Cancion> cancionList;
 
-    public List<Cancion> getCancion() {
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "canciones/list")).build();
-        try {
-            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            List<Cancion> cancionList = new ObjectMapper().readValue(response.body(), new TypeReference<>() {
-            });
-            return cancionList;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+    private HttpRequest httpRequest;
+
+    public class Listas {
+
+        //CREATE
+        public boolean createLista(Lista lista) {
+            try {
+                String json = "{\"nombre\":\"" + lista.getNombre() + "\" ,\"descripcion\":\"" + lista.getDescripcion() + "\"}";
+
+                httpRequest = HttpRequest.newBuilder()
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .uri(URI.create(BASE_URL + "listas/crear"))
+                        .setHeader("Content-Type", "application/json")
+                        .build();
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                System.out.println(json);
+                return true;
+
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-        return null;
+
+
+        //READ
+        public ArrayList<Lista> getListas() {
+            httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "listas/list")).build();
+            try {
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                listaList = new ObjectMapper().readValue(httpResponse.body(), new TypeReference<>() {
+                });
+
+                return listaList;
+
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        //UPDATE
+        public boolean updateLista(String nombre, Lista lista) {
+            try {
+                String json = "{\"nombre\":\"" + lista.getNombre() + "\" ,\"descripcion\":\"" + lista.getDescripcion() + "\"}";
+
+                httpRequest = HttpRequest.newBuilder()
+                        .PUT(HttpRequest.BodyPublishers.ofString(json))
+                        .uri(URI.create(BASE_URL + "listas/" + nombre))
+                        .setHeader("Content-Type", "application/json")
+                        .build();
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+                return true;
+
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        //DELETE
+        public boolean deleteLista(String nombre) {
+            httpRequest = HttpRequest.newBuilder().DELETE().uri(URI.create(BASE_URL + "listas/" + nombre)).build();
+            try {
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                return true;
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
     }
 
-    public ArrayList<Lista> getListas() {
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "listas/list")).build();
+    public class Canciones {
+
+        public Lista getListas(String nombre) {
+            httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "listas/" + nombre)).build();
+            try {
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+
+                lista = new ObjectMapper().readValue(httpResponse.body(), Lista.class);
+
+                return lista;
+
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public boolean createCancion(Cancion cancion) {
+
+            try {
+                String json = "{\"titulo\":\"" + cancion.getTitulo() + "\",\"artista\":\"" + cancion.getArtista() + "\",\"album\":\"" + cancion.getAlbum() + "\",\"anio\":\"" + cancion.getAnio() + "\"}";
+
+                httpRequest = HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + "canciones/crear"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                return true;
+            } catch (IOException | InterruptedException | JSONException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        public boolean deleteCancion(String titulo) {
+            try {
+                httpRequest = HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + "canciones/" + titulo))
+                        .header("Content-Type", "application/json")
+                        .DELETE()
+                        .build();
+
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                return true;
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+
+        public List<Cancion> getCanciones() {
+            httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "canciones/list")).build();
+
+            try {
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                cancionList = new ObjectMapper().readValue(httpResponse.body(), new TypeReference<>() {
+                });
+
+                return cancionList;
+
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
+    }
+
+    public boolean asignarCancionLista(String titulo, String nombre) {
         try {
-            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            ArrayList<Lista> listaList = new ObjectMapper().readValue(response.body(), new TypeReference<>() {
-            });
+            String json = "{}";
 
-            return listaList;
+            httpRequest = HttpRequest.newBuilder().PUT(HttpRequest.BodyPublishers.ofString(json))
+                    .uri(URI.create(BASE_URL + "canciones/" + titulo + "/" + nombre))
+                    .header("Content-Type", "application/json")
+                    .build();
 
-        } catch (IOException | InterruptedException e) {
+            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            return true;
+
+        } catch (IOException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return false;
+
     }
+
+    /*
+       try {
+                String json = "{\"titulo\":\"" + cancion.getTitulo() + "\",\"artista\":\"" + cancion.getArtista() + "\",\"album\":\"" + cancion.getAlbum() + "\",\"anio\":\"" + cancion.getAnio() + "\"}";
+
+                httpRequest = HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + "canciones/crear"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                return true;
+            } catch (IOException | InterruptedException | JSONException e) {
+                e.printStackTrace();
+            }
+            return false;
+
+
+    try {
+                httpRequest = HttpRequest.newBuilder()
+                        .uri(URI.create(BASE_URL + "canciones/" + titulo))
+                        .header("Content-Type", "application/json")
+                        .DELETE()
+                        .build();
+
+                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                return true;
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return false;
+     */
 
 
 }
-    /*
-        public void getCanciones() {
-        HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "canciones/list")).build();
-        try {
-            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-    public List<Cancion> cancionList() {
-        try {
-            HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(BASE_URL + "canciones/list")).build();
-            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
-            List<Cancion> listasList = ConvertirObjeto(httpResponse.body(), new TypeReference<List<Cancion>>() {
-            });
-
-            //new ObjectMapper().readValue(httpResponse.body(), new TypeReference<List<Cancion>>() {});
-
-            //ConvertirObjeto(httpResponse.body(), new TypeReference< List<Lista>>(){});
-
-            return listasList;
-
-            /*
-            List<Lista> listas = new ObjectMapper().readValue(httpResponse.body(), new TypeReference<List<Lista>>() {
-            });
-
-            // List<Lista> listas = new Gson().fromJson(httpResponse.body(), new TypeToken<List<Lista>>() {}.getType());
-
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    final ObjectMapper objectMapper = new ObjectMapper();
-
-    public <T> T get(String url, TypeReference<T> typeReference) {
-        try {
-            HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(URI.create(url)).build();
-            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            return objectMapper.readValue(httpResponse.body(), typeReference);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public <T> T ConvertirObjeto(final String json, final TypeReference<T> reference){
-        try {
-           return this.objectMapper.readValue(json, reference);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /*
-    public List<Cancion> cancionList(){
-
-        try  {
-            URL url = new URL(BASE_URL + "canciones/list");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-
-
-            int responseCode = con.getResponseCode();
-
-            if (responseCode != 200) {
-                throw new RuntimeException("Error: " + responseCode);
-            }else{
-                StringBuilder result = new StringBuilder();
-                Scanner scanner = new Scanner(url.openStream());
-
-                while (scanner.hasNext()) {
-                    result.append(scanner.next());
-                }
-
-                scanner.close();
-
-                System.out.println(result);
-            }
-
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }*/
-
-
-//}
